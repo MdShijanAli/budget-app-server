@@ -2,7 +2,8 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-// const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
+
 
 
 const port = process.env.PORT || 5000;
@@ -26,9 +27,24 @@ async function run() {
         const usersCollection = client.db('BudgetApp').collection('users')
     
 
+        // jwt
+
+       /*  app.post('/jwt', (req, res) => {
+            
+            const user = req.body;
+           console.log(user)
+     
+            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRECT, {
+                expiresIn: '1d'
+            })
+            console.log(token)
+            res.send({ token })
+        }) */
+
+
         // token 
 
-      /*   app.put('/user/:email', async (req, res) => {
+        /* app.put('/user/:email', async (req, res) => {
             const email = req.params.email;
             const user = req.body;
             const filter = { email: email };
@@ -40,8 +56,8 @@ async function run() {
 
             console.log(result)
 
-            const token = jwt.sign(user, process.env.ACCESS_TOKEN, {
-                expiresIn: '7d'
+            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRECT, {
+                expiresIn: '1d'
             })
             console.log(token)
             res.send({ result, token })
@@ -77,15 +93,57 @@ async function run() {
             res.send(result);
         })
 
+// User data update
+app.put('/user/:id', async (req, res) => {
+    const id = req.params.id;
+    const filter = { _id: new ObjectId(id) };
+    
+    const update = req.body;
+    const option = { upsert: true }
 
-        // get categories
+console.log("update", update)
+    const updateInfo = {
+        $set: {
+            photoURL: update.photoURL,
+            displayName: update.displayName,
+            phone: update.phone,
+            country: update.country
+            
+        }
+    }
+    console.log("updateInfo", updateInfo)
+    const result = await usersCollection.updateOne(filter, updateInfo, option)
+    res.send(result)
 
-        app.get('/categories', async (req, res) => {
-            const query = {}
-            const result = await categoriesCollection.find(query).toArray();
-            res.send(result);
-        })
+});
 
+    
+/* app.put('/user/:id', async (req, res) => {
+    const id = req.params.id;
+    const filter = { _id: ObjectId(id) };
+
+    const updateData = {};
+    if (req.body.name) {
+        updateData.name = req.body.name;
+    }
+    if (req.body.photo) {
+        updateData.photo = req.body.photo;
+    }
+    if (req.body.phone) {
+        updateData.phone = req.body.phone;
+    }
+    if (req.body.country) {
+        updateData.country = req.body.country;
+    }
+
+    const update = {
+        $set: updateData
+    };
+
+    const result = await usersCollection.updateOne(filter, update);
+    res.send(result);
+});
+ */
 
        
 
