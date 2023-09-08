@@ -145,6 +145,15 @@ console.log("update", update)
 });
  */
 
+        
+         // delete single users
+
+         app.delete('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) }
+            const result = await usersCollection.deleteOne(filter);
+            res.send(result);
+        })
        
 
 
